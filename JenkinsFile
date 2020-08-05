@@ -1,4 +1,4 @@
-﻿pipeline
+pipeline
 {
 	agent any
 	environment
@@ -69,6 +69,17 @@
 			}
 			}
 		}
+		stage ('Release Artifacts')
+		{
+			steps
+			{
+				echo "************** Publishing app ***************"
+				bat """
+				dotnet publish -c Release -o DevOpsSupportPOC/app/publish
+				"""
+			}
+		}
+		
 	}
 
 	 post {
