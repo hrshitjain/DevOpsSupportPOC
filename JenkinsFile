@@ -39,7 +39,7 @@ pipeline
 			steps
 			{
 				echo "*********** starting sonar analysis ***********"
-				withSonarQubeEnv('Test_Sonar')
+				withSonarQubeEnv('DevOpsSupportCoverage')
 			{
 				bat """
 				dotnet "${scannerHome}\\SonarScanner.MSBuild.dll" begin /k:$JOB_NAME /n:$JOB_NAME /v:1.0
@@ -61,7 +61,7 @@ pipeline
 			steps
 			{
 				echo "*************** Executing Sonar analysis ***********"
-			withSonarQubeEnv('Test_Sonar')
+			withSonarQubeEnv('DevOpsSupportCoverage')
 			{
 				bat """
 				dotnet "${scannerHome}\\SonarScanner.MSBuild.dll" end
