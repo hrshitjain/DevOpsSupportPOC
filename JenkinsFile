@@ -72,6 +72,7 @@ pipeline
 			steps
 			{
 				echo "************** Publishing app ***************"
+				bat """
 				dotnet publish -c Release -o DevOpsSupportPOC/app/publish
 				"""
 			}
