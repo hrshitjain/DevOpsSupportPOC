@@ -84,7 +84,7 @@ pipeline
 			steps
 			{
 				echo "****************** Build Docker image ****************"
-				bat "docker build --no-cache -t hj5083/nagp_devops:${BUILD_NUMBER} -f ."
+				bat "docker build --no-cache -t hj5083/nagp_devops:${BUILD_NUMBER} ."
 			}
 		}
 		stage ('Push to DTR')
