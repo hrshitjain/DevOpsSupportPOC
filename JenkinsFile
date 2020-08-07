@@ -31,7 +31,7 @@ pipeline
 			steps
 			{
 				echo "************ restoring dependancies **********"
-				sh label: '', script: 'dotnet restore'
+				bat "dotnet restore"
 			}
 		}
 		stage ('Start sonarqube analysis')
@@ -41,7 +41,9 @@ pipeline
 				echo "*********** starting sonar analysis ***********"
 				withSonarQubeEnv('DevOpsSupportCoverage')
 			{
-				sh "dotnet ${scannerHome}/SonarScanner.MSBuild.dll begin /k:$JOB_NAME /n:$JOB_NAME /v:1.0 "  
+				bat """
+				dotnet "${scannerHome}\\SonarScanner.MSBuild.dll" begin /k:$JOB_NAME /n:$JOB_NAME /v:1.0
+				"""    
 			}
                 
 			}
@@ -51,7 +53,7 @@ pipeline
 			steps
 			{
 				echo "************* building the solution **********"
-				sh "dotnet build -c Release -o DevOpsSupportPOC/app/build"
+				bat "dotnet build -c Release -o DevOpsSupportPOC/app/build"
 			}	
 		}
 		stage ('SonarQube Analysis end')
@@ -70,7 +72,8 @@ pipeline
 			steps
 			{
 				echo "************** Publishing app ***************"
-				sh "dotnet publish -c Release -o DevOpsSupportPOC/app/publish"
+				dotnet publish -c Release -o DevOpsSupportPOC/app/publish
+				"""
 			}
 		}
 		stage ('Docker Image')
@@ -78,7 +81,7 @@ pipeline
 			steps
 			{
 				echo "****************** Build Docker image ****************"
-				sh returnStdout: true, script: '/bin/docker build --no-cache -t dtr.nagarro.com:443/dotnetcoreapp_harshitjain:${BUILD_NUMBER} .'
+				bat "docker build --no-cache -t hj5083/nagp_devops:${BUILD_NUMBER} -f ."
 			}
 		}
 		stage ('Push to DTR')
@@ -86,22 +89,35 @@ pipeline
 			steps
 			{
 				echo "***************** Pushing image to Nagarro DTR or Docker Hub **********"
-				sh returnStdout: true, script: '/bin/docker push dtr.nagarro.com:443/dotnetcoreapp_harshitjain:${BUILD_NUMBER}'
+				withDockerRegistry(credentialsId:'90b4a558-220a-4e8f-b3c7-a8cb76d8a36b', url:'') {
+				bat "docker push hj5083/nagp_devops:${BUILD_NUMBER}"
+			}
 			}
 		}
 		stage ('Stop Running container')
 		{
 			steps
 			{
-				echo "*************** Removing already running conatiners *****************"
-				sh '''
-                ContainerID=$(docker ps | grep 5006 | cut -d " " -f 1)
-                if [  $ContainerID ]
-                then
-                    docker stop $ContainerID
-                    docker rm -f $ContainerID
-                fi
-            '''
+			echo "*************** Removing already running conatiners *****************"
+			bat """
+					@echo off
+					ECHO ***Start***
+					ECHO Check for all container
+					docker ps -all>Containers
+
+					for /f "tokens=1" %%r in ('FINDSTR "10800" Containers') do (
+						ECHO Container Id: %%r
+						SET ContainerId=%%r
+					)					
+					IF NOT [%ContainerId%] == [] (
+                            docker rm -f %ContainerId%
+                        ECHO Container removed
+                        )
+                    IF [%ContainerId%] == [] (
+                        ECHO No container found                   
+                        )
+				"""
+								
 			}
 		}
 		stage ('Docker deployment')
@@ -109,7 +125,7 @@ pipeline
 			steps
 			{
 			   echo "*************** Deploying latest war on Docker Containers **************"
-			   sh 'docker run --name dotnetcoreapp_harshitjain -d -p 5006:80 dtr.nagarro.com:443/dotnetcoreapp_harshitjain:${BUILD_NUMBER}'
+			   bat "docker run --name dotnetcoreapp_harshitjain -d -p 5006:80 hj5083/nagp_devops:${BUILD_NUMBER}"
 			}
 		}
 		
