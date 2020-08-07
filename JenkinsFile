@@ -84,7 +84,7 @@ pipeline
 			steps
 			{
 				echo "****************** Build Docker image ****************"
-				bat "docker build --no-cache -t hj5083/nagp_devops:${BUILD_NUMBER} ."
+				bat "docker build --no-cache -t harshit92/nagp_devops:${BUILD_NUMBER} ."
 			}
 		}
 		stage ('Push to DTR')
@@ -93,7 +93,7 @@ pipeline
 			{
 				echo "***************** Pushing image to Nagarro DTR or Docker Hub **********"
 				withDockerRegistry(credentialsId:'90b4a558-220a-4e8f-b3c7-a8cb76d8a36b', url:'') {
-				bat "docker push hj5083/nagp_devops:${BUILD_NUMBER}"
+				bat "docker push harshit92/nagp_devops:${BUILD_NUMBER}"
 			}
 			}
 		}
@@ -128,7 +128,7 @@ pipeline
 			steps
 			{
 			   echo "*************** Deploying latest war on Docker Containers **************"
-			   bat "docker run --name dotnetcoreapp_harshitjain -d -p 5006:80 hj5083/nagp_devops:${BUILD_NUMBER}"
+			   bat "docker run --name dotnetcoreapp_harshitjain -d -p 5006:80 harshit92/nagp_devops:${BUILD_NUMBER}"
 			}
 		}
 		
