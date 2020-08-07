@@ -84,7 +84,7 @@ pipeline
 			steps
 			{
 				echo "****************** Build Docker image ****************"
-				bat "docker build --no-cache -t hj0077/nagp_devops:${BUILD_NUMBER} ."
+				bat "docker build --no-cache -t hj0077/nagp_devops:${BUILD_NUMBER} -f DevOpsSupportPOC/Dockerfile."
 			}
 		}
 		
