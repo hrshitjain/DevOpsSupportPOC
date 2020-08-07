@@ -20,4 +20,5 @@ bld/
 
 # Project file
 *.suo
+*.user
 *.vs
