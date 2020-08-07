@@ -63,7 +63,9 @@ pipeline
 				echo "*************** Executing Sonar analysis ***********"
 			withSonarQubeEnv('DevOpsSupportCoverage')
 			{
-				sh "dotnet ${scannerHome}/SonarScanner.MSBuild.dll end"
+				bat """
+				dotnet "${scannerHome}\\SonarScanner.MSBuild.dll" end
+				"""
 			}
 			}
 		}
