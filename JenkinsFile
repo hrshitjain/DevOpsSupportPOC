@@ -38,7 +38,7 @@ pipeline
 		{
 			steps
 			{
-				echo "*********** starting sonar analysis ***********"
+				echo "*********** starting sonar analysis $JOB_NAME***********"
 				withSonarQubeEnv('Test_Sonar')
 			{
 				bat """
