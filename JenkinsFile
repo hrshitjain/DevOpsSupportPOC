@@ -3,7 +3,7 @@ pipeline
 	agent any
 	environment
 	{
-		scannerHome = tool name: 'DevOpsSupportScanner', type: 'hudson.plugins.sonar.MsBuildSQRunnerInstallation'   
+		scannerHome = tool name: 'sonar_scanner_dotnet', type: 'hudson.plugins.sonar.MsBuildSQRunnerInstallation'   
 	}
 	options
    {
@@ -39,7 +39,7 @@ pipeline
 			steps
 			{
 				echo "*********** starting sonar analysis ***********"
-				withSonarQubeEnv('DevOpsSupportCoverage')
+				withSonarQubeEnv('Test_Sonar')
 			{
 				bat """
 				dotnet "${scannerHome}\\SonarScanner.MSBuild.dll" begin /k:$JOB_NAME /n:$JOB_NAME /v:1.0
@@ -61,7 +61,7 @@ pipeline
 			steps
 			{
 				echo "*************** Executing Sonar analysis ***********"
-			withSonarQubeEnv('DevOpsSupportCoverage')
+			withSonarQubeEnv('Test_Sonar')
 			{
 				bat """
 				dotnet "${scannerHome}\\SonarScanner.MSBuild.dll" end
